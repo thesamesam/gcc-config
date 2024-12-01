@@ -318,7 +318,7 @@ update_wrappers() {
 		x=${x%:*}
 
 		if [[ ! -x ${ref} ]] ; then
-			if is_cross_compiler ; then
+			if is_cross_compiler && [[ ${ref} != *-accel-* ]] ; then
 				ewarn "insanity with ${x} and ${ref}"
 			else
 				# For native targets, the ref might not be
@@ -332,6 +332,7 @@ update_wrappers() {
 			# Delete stale native symlink.
 			rm -f "${EROOT}usr/bin/${x}"
 		elif [[ -x ${ref} ]] ; then
+			[[ ${x} == *-accel-* ]] && x="${x#${CTARGET}-}"
 			atomic_ln "${ref#${ROOT}}" "${EROOT}usr/bin" "${x}"
 		else
 			# Make sure we have no stale wrappers
